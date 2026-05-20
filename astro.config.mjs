@@ -20,6 +20,10 @@ export default defineConfig({
           label: "Your First API",
           link: "curriculum/your_first_api",
         },
+        {
+          label: "Data in FastAPI",
+          link: "curriculum/data_in_fastapi",
+        },
       ],
     }),
   ],

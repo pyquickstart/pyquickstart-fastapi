@@ -1,0 +1,44 @@
+---
+title: Data in FastAPI
+description: How to get data into and out of a FastAPI API with type hints and Pydantic models
+---
+
+# Python Type Hints 
+
+In the [Python QuickStart](https://pyquickst.art/curriculum/module07/), you briefly saw Python type hints in action. A type hint in Python is just that, a hint or a suggestion as to what type the value of a variable should be.  However, you also saw that Python ignores them. Instead, the application, and the tools used to develop it, decide how the type hints should be used.
+
+So how does FastAPI use type hints? In a REST API, you can send values to an endpoint by appending path parameters. For example, let's say we have an endpoint to look up the current price of a cryptocurrency.  Maybe it's named `/lookup`.  We need to tell the API which coin to lookup. The name of the coin can be appended to the endpoint like so: `/lookup/bitcoin`. We tell FastAPI to parse the endpoint and use the value in the last segment as coin, and pass it to the function handling the request.
+
+This is done using the `get` decorator.  The path parameters are indicated using syntax like that of Python f-strings, curly braces around a parameter name.
+
+```Python
+@app.get("/lookup/{coin}")
+```
+
+The handler function decorated by the `get` decorator must except a parameter named `coin`:
+
+```python
+@app.get("/lookup/{coin}")
+def lookup(coin):
+    """
+    Use the coin parameter to get the value of a cryptocurrency with the CoinGecko API like in the Python QuickStart
+    """
+    url = f"https://api.coingecko.com/api/v3/simple/price?vs_currencies=USD&ids={coin}&x_cg_demo_api_key={coingecko_api_key}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        price = data["bitcoin"]["usd"]
+        return {coin: price}
+    else:
+        return {"error": "could not get any data"}
+```
+
+So what about type hints? FastAPI will use the type hints to ensure the value passed to the path parameter is of a certain type.  The hints are added to the parameters in the handler function
+
+```python
+@app.get("/lookup/{coin}")
+def lookup(coin: str):
+    # same as above
+```
+
+In this case 
