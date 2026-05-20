@@ -8,6 +8,7 @@ import expand_status from "../../../../assets/your_first_api/expand_status.png";
 import execute from "../../../../assets/your_first_api/execute.png";
 import fastapi_response from "../../../../assets/your_first_api/response.png";
 import rest_client_get from "../../../../assets/your_first_api/rest_client_get.png";
+import rest_client_response from "../../../../assets/your_first_api/rest_client_response.png";
 
 # Hello FastAPI
 
@@ -105,3 +106,9 @@ GET http://127.0.0.1:8000/status
 This tells the extension to make a GET request to the `/status` endpoint we just created.  Notice that a link to send the request appears over the line just written.
 
 <img src={rest_client_get.src} alt="Response from FastAPI" />
+
+Click the link and the HTTP response opens in a new pane.
+
+<img src={rest_client_response.src} alt="Response in new pane" />
+
+Through the course we will use the interactive docs for initial testing and exploration.  But when we need to dig into the details of the response, or do something not supported by the interactive documentation, we will use REST Client.  Both tools when used together make testing REST APIs simpler.
