@@ -1,9 +1,16 @@
 ---
 title: Data in FastAPI
-description: How to get data into and out of a FastAPI API with type hints and Pydantic models
+description: How to get data into and out of a FastAPI API with type hints
 ---
 
-# Python Type Hints 
+import portfolio_id_int from "../../../../assets/data_in_fastapi/portfolio_id_int.png";
+import portfolio_id_value from "../../../../assets/data_in_fastapi/portfolio_id_value.png";
+import portfolio_id_result from "../../../../assets/data_in_fastapi/portfolio_id_result.png";
+import portfolio_id_string from "../../../../assets/data_in_fastapi/portfolio_id_string.png";
+import portfolio_id_execute from "../../../../assets/data_in_fastapi/portfolio_id_execute.png";
+import portfolio_id_422 from "../../../../assets/data_in_fastapi/portfolio_id_422.png";
+
+## Path Parameters and Type Hints
 
 In the [Python QuickStart](https://pyquickst.art/curriculum/module07/), you briefly saw Python type hints in action. A type hint in Python is just that, a hint or a suggestion as to what type the value of a variable should be.  However, you also saw that Python ignores them. Instead, the application, and the tools used to develop it, decide how the type hints should be used.
 
@@ -11,7 +18,7 @@ So how does FastAPI use type hints? In a REST API, you can send values to an end
 
 This is done using the `get` decorator.  The path parameters are indicated using syntax like that of Python f-strings, curly braces around a parameter name.
 
-```Python
+```python
 @app.get("/lookup/{coin}")
 ```
 
@@ -41,4 +48,57 @@ def lookup(coin: str):
     # same as above
 ```
 
-In this case 
+In this case, the `coin` parameter is expected to be a string.  The `str` type hint tells FastAPI to ensure that the value in the path parameter is a string. If the value is not a string, FastAPI will raise an exception.
+
+## Data Validation Errors
+
+In this endpoint, just about any value passed to the `coin` parameter will end up a string. For example, if you make a request to `/lookup/123`, the value of `coin` will be the string `"123"`. FastAPI will cast the value based on the type hint.
+
+Let's take a look at a different endpoint. Take a look at this endpoint which retrieves a porfolio by its unique integer identifier.
+
+```python
+@app.get("/portfolio/{portfolio_id}")
+def get_portfolio(portfolio_id: int):
+    return {"portfolio_id": portfolio_id}
+```
+
+If you were to test this endpoint in the interactive docs, you'll see an interface like this:
+
+<img src={portfolio_id_int.src} alt="Path parameter with integer type hint" />
+
+The interactive docs list the parameters to the endpoint along with the expected types.  It marks the `portfolio_id` parameter as an integer, passed in the path, and it is required.  Click the **Try it out** button and enter an integer value in the text box.
+
+<img src={portfolio_id_value.src} alt="Path parameter with integer value" />
+
+Click the **Execute** button and scroll down to the response. You should see a response with a status code of 200 and a body with the JSON object `{"portfolio_id": 123}`.
+
+<img src={portfolio_id_result.src} alt="Response from FastAPI with integer path parameter" />
+
+Try it again with a value that is not an integer.  Scroll back up to the text box and enter a string value like `bitcoin`.
+
+<img src={portfolio_id_string.src} alt="Path parameter with string value" />
+
+Press the **Execute** button.
+
+<img src={portfolio_id_execute.src} alt="Execute button pressed" />
+
+The string "bitcoin" cannot be parsed as an integer, so FastAPI raises an exception.  The interactive docs indicate the error by shading the textbox in red and displaying an error message.
+
+## Data Validation Errors in REST Client
+
+Unfortunately, this is as far as you can go with the interactive docs.  In order to get more details about the error, you need to use the REST Client extension or another HTTP client. Add the following request to the `requests.http` file in the root of your project.
+
+```
+GET http://127.0.0.1:8000/portfolio/bitcoin
+```
+
+Click the **Send Request** link that appears above the line you just wrote.  The response will open in a new pane.  
+
+<img src={portfolio_id_422.src} alt="Response from FastAPI with invalid integer path parameter" />
+
+Here you can see the status code of the response is 422. As the string "bitcoin" cannot be parsed as an integer, it is an "Unprocessable Entity". The body of the response contains JSON with more details about the error.  You can see that the offending variable is `portfolio_id` and that it is a path parameter.  The value causing the problem is "bitcoin". And the `msg` is the description of the error.
+
+This is an example of why you should only use the interactive docs for quick testing and exploration. To get more details about errors, you need to use a tool like the REST Client extension.
+
+
+
