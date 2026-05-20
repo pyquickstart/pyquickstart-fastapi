@@ -21,8 +21,12 @@ export default defineConfig({
           link: "curriculum/your_first_api",
         },
         {
-          label: "Data in FastAPI",
+          label: "Data Validation in FastAPI",
           link: "curriculum/data_in_fastapi",
+        },
+        {
+          label: "Handling Complex Data in FastAPI",
+          link: "curriculum/handling_complex_data",
         },
       ],
     }),

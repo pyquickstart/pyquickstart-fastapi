@@ -1,0 +1,62 @@
+---
+title: Handling Complex Data in FastAPI
+description: How to use Pydantic models to handle complex data in FastAPI
+---
+
+import pydantic_docs_post from "../../../../assets/handling_complex_data/pydantic_docs_post.png";
+
+Not all data can be represented as singular values in a URL. Take the cryptocurrency transaction from the [Python Quickstart](https://pyquickst.art/curriculum/module05/). In that example, we used several simple values to represent the transaction.
+
+- `coin`
+- `amount`
+- `buy`
+- `timestamp`
+- `notes`
+
+Let's say we want an endpoint that creates a new transaction, we technically could pass all of the values as path parameters. The result would be a very long URL. For example:
+
+```GET /transactions/create/bitcoin/0.5/true/2021-01-01T00:00:00Z/first%20transaction```
+
+This also causes problem with optional values. In the original example, the `notes` field is optional. If we wanted to create a transaction without notes, we would have to create a new endpoint that doesn't expect the `notes` parameter.
+
+## Pydantic Models
+
+In the Python Quickstart, we used a **class** to represent the values that make up a transaction. In FastAPI, we use **Pydantic** models to represent complex data. Pydantic is a Python package that provides runtime data validation using Python type annotations. 
+
+Pydantic is a dependency of FastAPI and is installed witht the `fastapi` package. You can also install it separately with `pip install pydantic`.
+
+A Pydantic model is a subclass of the `BaseModel` class from the `pydantic` package. We can define a Pydantic model for our transaction like this:
+
+```python
+from typing import Optional
+
+from pydantic import BaseModel
+
+class CryptocurrencyTransaction(BaseModel):
+    coin: str
+    amount: float
+    buy: bool
+    timestamp: str
+    notes: Optional[str] = None
+```
+
+The fields of the model are class attributes with type annotations. The `Optional` type from the `typing` module indicates the `notes` field is not required and may be omitted.  However, when a value is provided, it must be a string. The class also sets a default value for the `notes` field to `None`.
+
+## Using Pydantic Models in FastAPI
+
+Instead of an endpoint that accepts a long list of path parameters, FastAPI allows us to use a Pydantic model. We can define an endpoint that accepts a `CryptocurrencyTransaction` in the request body list this:
+
+```python
+@app.post("/transaction")
+def create_transaction(transaction: CryptocurrencyTransaction):
+    buy_sell = "bought" if transaction.buy else "sold"
+    return {
+        "message": f"Created transaction for {transaction.amount} {transaction.coin}: {buy_sell} at {transaction.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"
+    }
+```
+
+Notice this time the handler function is decorated with the `post` decorator and the path accepts no parameters.  This is because the data to create a new transaction will be sent in the body of the request as a JSON object. This JSON object will mirror the structure of the `CryptocurrencyTransaction` class.  FastAPI will parse the JSON object, use it to create an instance of `CryptocurrencyTransacation`, invoke the `create_transaction` function, and pass the instance as the `transaction` parameter.
+
+Let's see how this works with the interactive docs. If not started, launch the development server with `fastapi dev`. In a browser, go to `http://127.0.0.1:8000/docs`. Expand the endpoint for **POST /transaction**.
+
+<img src={pydantic_docs_post} alt="Pydantic model in FastAPI docs" />
