@@ -3,6 +3,11 @@ title: Your First API
 description: Create your first RESTful API with FastAPI
 ---
 
+import title_version_description from "../../../../assets/your_first_api/title_version_description.png";
+import expand_status from "../../../../assets/your_first_api/expand_status.png";
+import execute from "../../../../assets/your_first_api/execute.png";
+import fastapi_response from "../../../../assets/your_first_api/response.png";
+
 # Hello FastAPI
 
 In this course, you will learn how to develop an application that implements a REST web API. The package we will use is called **FastAPI**. FastAPI is a Python framework that uses modern language features such as async and type hints to easily configure web APIs. It is open source and actively maintained on GitHub. It has enjoyed remarkable success since being first released. Even though it is newer, FastAPI has more stars on GitHub than either Flask, or Django.
@@ -35,10 +40,14 @@ And create a new instance of the application class.
 app = FastAPI()
 ```
 
-One of the more commonly used keyword arguments to the `FastAPI` initializer is `title`. You'll see how this is used by FastAPI shortly.
+One of the more commonly used keyword arguments to the `FastAPI` initializer is `title`.  You can also give the API a version with the `version` keyword argument.  And you can tell users a little about the API with the `description` keyword arguemnt. You'll see how these are used by FastAPI shortly.
 
 ```python
-app = FastAPI(title="Cryptocurrency Portfolio Manager API")
+app = FastAPI(
+    title="Cryptocurrency Manager",
+    version="1.0.0",
+    description="API for managing cryptocurrency portfolios",
+)
 ```
 
 ## Routing HTTP Requests
@@ -53,5 +62,31 @@ def api_status():
 This is a Python function that returns a dictionary. When used to handle an HTTP request, FastAPI will convert the returned dictionary into JSON and include it in the body of an HTTP response. The next step is to map the function to an HTTP endpoint. When a request is sent to the endpoint, FastAPI will invoke the function.
 
 ```python
-
+@app.get("/status")
+def api_status():
+    return {"status": "ok"}
 ```
+
+In Python `@app.get` is what is known as a _decorator_. A decorator is a function that extends or modifies the behavior of another function. Decorators also work with classes and methods. Here the decorator is named `get`. The `get` decorator informs FastAPI that the `api_status` function should be invoked in response to an HTTP GET request. The `get` decorator accepts an endpoint as a parameter. Here that endpoint is `/status`. Now when the FastAPI application receives an HTTP GET request for the `/status` endpoint, it will invoke the `api_status` function. When the function returns the dictionary, FastAPI will convert it to a JSON object and include it in the body of the response.
+
+## Try the API
+
+When you install the `fastapi` package with the `[standard]` extra, it includes a command line utility to start the FastAPI application running in a development server.  At the command line run `fastapi dev`.  The development server will start on localhost and listen on port 8000.  Open a browser and go to http://127.0.0.1:8000/docs.  The is the endpoint for the built in interactive documentation included with FastAPI.  It's a quick and easy way to explore your API.
+
+<img src={title_version_description.src} alt="Title, version and description" />
+
+Notice the title (1), version (2) and description (3) are displayed at the top of the docs. These values came from the keyword arguments to the `FastAPI` initializer.
+
+Expand the `/status` endpoint and click the "Try it out" button.
+
+<img src={expand_status.src} alt="Expand the /status endpoint" />
+
+Then click the "Execute" button.
+
+<img src={execute.src} alt="Click the Execute button" />
+
+Scroll down and you should see a response with a status code of 200 and a body that contains the JSON object `{"status": "ok"}`.
+
+<img src={fastapi_response.src} alt="Response from FastAPI" />
+
+We will make extensive use of the interactive documentation in this course. But there are other tools we can use to test our API. 
