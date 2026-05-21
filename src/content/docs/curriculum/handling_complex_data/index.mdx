@@ -4,6 +4,8 @@ description: How to use Pydantic models to handle complex data in FastAPI
 ---
 
 import pydantic_docs_post from "../../../../assets/handling_complex_data/pydantic_docs_post.png";
+import pydantic_docs_edit from "../../../../assets/handling_complex_data/pydantic_docs_edit.png";
+import pydantic_docs_response from "../../../../assets/handling_complex_data/pydantic_docs_response.png";
 
 Not all data can be represented as singular values in a URL. Take the cryptocurrency transaction from the [Python Quickstart](https://pyquickst.art/curriculum/module05/). In that example, we used several simple values to represent the transaction.
 
@@ -60,3 +62,13 @@ Notice this time the handler function is decorated with the `post` decorator and
 Let's see how this works with the interactive docs. If not started, launch the development server with `fastapi dev`. In a browser, go to `http://127.0.0.1:8000/docs`. Expand the endpoint for **POST /transaction**.
 
 <img src={pydantic_docs_post.src} alt="Pydantic model in FastAPI docs" />
+
+Again, the data to `/transaction` is sent, as JSON, through the body of the request, not path parameters. The interactive docs give you a JSON object with the same structure as the `CryptocurrencyTransaction` model. This is the JSON object that FastAPI will parse to create and instance of `CryptocurrencyTransaction` to be passed to the `create_transaction1 function. Click the **Try it out** button.
+
+<img src={pydantic_docs_edit.src} alt="Editing the JSON object in the FastAPI docs" />
+
+Now you can edit the JSON object. Here I've changed the `coin` field to `bitcoin` and the `amount` field to `1.1`. Notice also since this is JSON, `true` is lowercase. Also the `timestamp` field is a string in "YYYY-MM-DD" format. And we can omit the `notes` field since it's optional. Click the **Execute** button to send the request.
+
+<img src={pydantic_docs_response.src} alt="Response from the FastAPI docs" />
+
+The response has a 200 status code and the body is a JSON object with a `message` contains data about the transaction.
