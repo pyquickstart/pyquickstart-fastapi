@@ -6,6 +6,8 @@ description: How to use Pydantic models to handle complex data in FastAPI
 import pydantic_docs_post from "../../../../assets/handling_complex_data/pydantic_docs_post.png";
 import pydantic_docs_edit from "../../../../assets/handling_complex_data/pydantic_docs_edit.png";
 import pydantic_docs_response from "../../../../assets/handling_complex_data/pydantic_docs_response.png";
+import transaction_history_request from "../../../../assets/handling_complex_data/transaction_history_request.png";
+import transaction_history_response from "../../../../assets/handling_complex_data/transaction_history_response.png";
 
 Not all data can be represented as singular values in a URL. Take the cryptocurrency transaction from the [Python Quickstart](https://pyquickst.art/curriculum/module05/). In that example, we used several simple values to represent the transaction.
 
@@ -72,3 +74,40 @@ Now you can edit the JSON object. Here I've changed the `coin` field to `bitcoin
 <img src={pydantic_docs_response.src} alt="Response from the FastAPI docs" />
 
 The response has a 200 status code and the body is a JSON object with a `message` contains data about the transaction.
+
+## Returning a Pydantic Model
+
+Pydantic models can also be used to return complex data in the response. For example, we could have an endpoint that returns a list of transaction history. Tell FastAPI to that the response will return a `List` of `CryptocurrencyTransaction` objects with the `response_model` keyword argument:
+
+```python
+from typing import List
+
+@app.get("/transactions/history", response_model=List[CryptocurrencyTransaction])
+def get_transaction_history():
+    return [
+        CryptocurrencyTransaction(
+            coin="bitcoin",
+            amount=1.5,
+            buy=True,
+            timestamp=date(2026, 1, 1)
+        ),
+        CryptocurrencyTransaction(
+            coin="bitcoin",
+            amount=1.0,
+            buy=False,
+            timestamp=date(2026, 2, 1)
+        )
+    ]
+```
+
+The `List` type from the `typing` module found in the Python standard library indicates the response will be a list of `CryptocurrencyTransaction` objects. The `get_transaction_history` function returns a list of two `CryptocurrencyTransaction` objects. These are created in the function directly, but later will be retrieved from a database. FastAPI will convert each `CryptocurrencyTransaction` object into a JSON object and return all of the JSON objects in a JSON array in the response body.
+
+Let's try it out in the interactive docs.
+
+<img src={transaction_history_request.src} alt="Requesting transaction history in the FastAPI docs" />
+
+The endpoint has no parameters so click the **Try it out** button and then the **Execute** button.
+
+<img src={transaction_history_response.src} alt="Response from the transaction history endpoint in the FastAPI docs" />
+
+As expected the response body shows a JSON array of JSON objects. Each JSON object has the same structure as the `CryptocurrencyTransaction` model.
