@@ -9,6 +9,9 @@ import execute from "../../../../assets/your_first_api/execute.png";
 import fastapi_response from "../../../../assets/your_first_api/response.png";
 import rest_client_get from "../../../../assets/your_first_api/rest_client_get.png";
 import rest_client_response from "../../../../assets/your_first_api/rest_client_response.png";
+import kill_terminal from "../../../../assets/your_first_api/kill_terminal.png";
+import fastapi_dev from "../../../../assets/your_first_api/fastapi_dev.png";
+import integrated_browser from "../../../../assets/your_first_api/integrated_browser.png";
 
 # Hello FastAPI
 
@@ -73,7 +76,25 @@ In Python `@app.get` is what is known as a _decorator_. A decorator is a functio
 
 ## Try the API
 
-When you install the `fastapi` package with the `[standard]` extra, it includes a command line utility to start the FastAPI application running in a development server.  At the command line run `fastapi dev`.  The development server will start on localhost and listen on port 8000.  Open a browser and go to http://127.0.0.1:8000/docs.  The is the endpoint for the built in interactive documentation included with FastAPI.  It's a quick and easy way to explore your API.
+When you install the `fastapi` package with the `[standard]` extra, it includes a command line utility to start the FastAPI application running in a development server.  At the command line run `fastapi dev`.  
+
+> **Note**
+>
+> If the `fastapi dev` command fails.  Kill the terminal with by clicking the trash can icon in the terminal pane. Then open a new terminal and try again.
+>
+> <img src={kill_terminal.src} alt="Kill the terminal" />
+
+The development server will start on localhost and listen on port 8000.  You can see this in the terminal window.  
+
+<img src={fastapi_dev.src} alt="Start the FastAPI development server" />
+
+
+
+*Ctrl + click* (*Command + click* on macOS) the link `http://127.0.0.1:8000`.  This will open the interactive documentation in the integrated browser in Visual Studio Code.
+
+<img src={integrated_browser.src} alt="Open the interactive documentation in the integrated browser" />
+
+This is not an error!  Well, it is an error, but it's an expected error.  The root endpoint `/` is not configured to handle HTTP requests. Instead go to the `/docs` endpoint. This is the endpoint for the built in interactive documentation included with FastAPI.  It's a quick and easy way to explore your API.
 
 <img src={title_version_description.src} alt="Title, version and description" />
 
